@@ -1,2 +1,7 @@
 node_modules
 dist/
+Data-Pipeline-charts/
+_astro/
+favicon.svg
+index.html
+profile.jpg
