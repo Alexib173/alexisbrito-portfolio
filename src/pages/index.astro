@@ -1,0 +1,172 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import SectionContainer from '../components/SectionContainer.astro';
+import SocialPill from '../components/SocialPill.astro';
+import Projects from '../components/Projects.astro';
+import AboutMe from '../components/AboutMe.astro';
+---
+
+<Layout>
+  <Header />
+
+  <main class="pt-20">
+    <!-- ═══════════════════════════════ HERO ═══════════════════════════════ -->
+    <SectionContainer id="home">
+      <div class="flex flex-col gap-8 animate-fade-in">
+        <!-- Top row: photo + status -->
+        <div class="flex items-center gap-5">
+          <div class="relative">
+            <img
+              src="/profile.jpg"
+              alt="Alexis Brito"
+              width="80"
+              height="80"
+              class="h-20 w-20 rounded-full object-cover object-top ring-2 ring-sky-400/30 shadow-lg shadow-sky-500/10"
+            />
+            <!-- Online dot -->
+            <span
+              class="absolute bottom-0.5 right-0.5 h-3 w-3 rounded-full bg-emerald-400 ring-2 ring-[#0a0f1a]"
+            />
+          </div>
+
+          <!-- Available badge -->
+          <a
+            href="https://www.linkedin.com/in/alexis-s-brito"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 px-3.5 py-1.5 text-xs text-emerald-400 font-medium transition hover:bg-emerald-500/20"
+          >
+            <span class="relative flex h-2 w-2">
+              <span
+                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"
+              ></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
+            </span>
+            Available to work
+          </a>
+        </div>
+
+        <!-- Name + headline -->
+        <div class="space-y-2" style="animation-delay:100ms">
+          <h1 class="text-4xl sm:text-5xl font-bold text-white tracking-tight leading-none">
+            Alexis Brito
+          </h1>
+          <h2 class="text-lg text-sky-400 font-mono tracking-widest uppercase">
+            IT | Data Science | Info Sec.
+          </h2>
+          <p class="text-slate-400 text-sm max-w-lg leading-relaxed pt-1">
+            Bilingual IT professional passionate about turning raw data into actionable insights.
+            Based in New Jersey — open to remote opportunities.
+          </p>
+        </div>
+
+        <!-- Social pills -->
+        <div class="flex flex-wrap gap-2" style="animation-delay:200ms">
+          <SocialPill href="https://www.linkedin.com/in/alexis-s-brito" label="LinkedIn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
+              <rect width="4" height="12" x="2" y="9"/>
+              <circle cx="4" cy="4" r="2"/>
+            </svg>
+          </SocialPill>
+
+          <SocialPill href="https://github.com/Alexib173" label="GitHub">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/>
+              <path d="M9 18c-4.51 2-5-2-7-2"/>
+            </svg>
+          </SocialPill>
+
+          <SocialPill href="mailto:Alexibc01@gmail.com" label="Email">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="20" height="16" x="2" y="4" rx="2"/>
+              <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+            </svg>
+          </SocialPill>
+        </div>
+      </div>
+    </SectionContainer>
+
+    <!-- ══════════════════════════════ PROJECTS ════════════════════════════ -->
+    <SectionContainer id="projects">
+      <div class="space-y-8">
+        <div class="flex items-center gap-3">
+          <span class="text-sky-400">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="16 18 22 12 16 6"/>
+              <polyline points="8 6 2 12 8 18"/>
+            </svg>
+          </span>
+          <h2 class="text-xl font-bold text-white">Projects</h2>
+        </div>
+        <Projects />
+      </div>
+    </SectionContainer>
+
+    <!-- ════════════════════════════ ABOUT ME ══════════════════════════════ -->
+    <SectionContainer id="about">
+      <div class="space-y-8">
+        <div class="flex items-center gap-3">
+          <span class="text-sky-400">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="8" r="5"/>
+              <path d="M20 21a8 8 0 1 0-16 0"/>
+            </svg>
+          </span>
+          <h2 class="text-xl font-bold text-white">About Me</h2>
+        </div>
+        <AboutMe />
+      </div>
+    </SectionContainer>
+
+    <!-- ══════════════════════════════ CONTACT ═════════════════════════════ -->
+    <SectionContainer id="contact">
+      <div class="space-y-8">
+        <div class="flex items-center gap-3">
+          <span class="text-sky-400">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+          </span>
+          <h2 class="text-xl font-bold text-white">Contact</h2>
+        </div>
+
+        <div class="rounded-2xl border border-white/8 bg-white/[0.03] p-8 text-center space-y-5">
+          <p class="text-slate-400 text-sm max-w-md mx-auto leading-relaxed">
+            I'm currently open to new opportunities. Whether you have a question, a role, or just
+            want to connect — my inbox is always open.
+          </p>
+          <a
+            href="mailto:Alexibc01@gmail.com"
+            class="inline-flex items-center gap-2 rounded-full bg-sky-500 px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-sky-500/25 transition-all hover:bg-sky-400 hover:scale-105 hover:shadow-sky-400/30"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="20" height="16" x="2" y="4" rx="2"/>
+              <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+            </svg>
+            Say Hello
+          </a>
+          <div class="pt-2 flex justify-center gap-6 text-sm text-slate-600">
+            <a href="https://www.linkedin.com/in/alexis-s-brito" target="_blank" class="hover:text-sky-400 transition-colors">LinkedIn</a>
+            <a href="https://github.com/Alexib173" target="_blank" class="hover:text-sky-400 transition-colors">GitHub</a>
+            <span>Gillette, NJ</span>
+          </div>
+        </div>
+      </div>
+    </SectionContainer>
+  </main>
+
+  <Footer />
+</Layout>
+
+<style>
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .animate-fade-in {
+    animation: fadeIn 0.7s ease both;
+  }
+</style>

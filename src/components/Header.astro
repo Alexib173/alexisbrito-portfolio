@@ -1,0 +1,27 @@
+---
+const navLinks = [
+  { href: '#home', label: 'Home' },
+  { href: '#projects', label: 'Projects' },
+  { href: '#about', label: 'About Me' },
+  { href: '#contact', label: 'Contact' },
+];
+---
+
+<header
+  class="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-fit"
+>
+  <nav
+    class="flex items-center gap-1 rounded-full border border-white/10 bg-[#0a0f1a]/80 px-4 py-2 backdrop-blur-md shadow-lg shadow-black/30"
+  >
+    {
+      navLinks.map(({ href, label }) => (
+        <a
+          href={href}
+          class="rounded-full px-3 py-1.5 text-sm text-slate-300 transition-all duration-200 hover:bg-white/10 hover:text-white"
+        >
+          {label}
+        </a>
+      ))
+    }
+  </nav>
+</header>

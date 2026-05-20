@@ -1,0 +1,77 @@
+---
+const skills = [
+  { label: 'Python (Intermediate)', color: 'bg-yellow-400/10 text-yellow-300 border-yellow-400/20' },
+  { label: 'Java', color: 'bg-orange-400/10 text-orange-300 border-orange-400/20' },
+  { label: 'SQL', color: 'bg-blue-400/10 text-blue-300 border-blue-400/20' },
+  { label: 'HTML / CSS', color: 'bg-rose-400/10 text-rose-300 border-rose-400/20' },
+  { label: 'R', color: 'bg-green-400/10 text-green-300 border-green-400/20' },
+  { label: 'Bash / Linux CLI', color: 'bg-slate-400/10 text-slate-300 border-slate-400/20' },
+];
+
+const certifications = [
+  { name: 'PCEP™ Python Certified', date: 'Apr 2026' },
+  { name: 'Data Analytics Certificate of Achievement', date: '' },
+  { name: 'Information Security Certificate of Achievement', date: '' },
+  { name: 'CompTIA A+ (In Progress)', date: '' },
+];
+---
+
+<div class="space-y-10">
+  <!-- Summary -->
+  <div class="space-y-3">
+    <h3 class="text-xs font-mono uppercase tracking-widest text-sky-400/70">Summary</h3>
+    <p class="text-slate-300 leading-relaxed text-sm">
+      Bilingual (English & Spanish) IT and data-focused professional with a strong interest in data
+      analytics and data science. Able to clean, organize, and analyze data to support
+      decision-making and uncover actionable insights. Detail-oriented, adaptable, and committed to
+      using technical skills to contribute to team performance.
+    </p>
+  </div>
+
+  <!-- Skills -->
+  <div class="space-y-3">
+    <h3 class="text-xs font-mono uppercase tracking-widest text-sky-400/70">Technical Skills</h3>
+    <div class="flex flex-wrap gap-2">
+      {
+        skills.map((skill) => (
+          <span
+            class={`text-xs px-3 py-1 rounded-full border font-medium ${skill.color} transition-transform hover:scale-105`}
+          >
+            {skill.label}
+          </span>
+        ))
+      }
+    </div>
+  </div>
+
+  <!-- Education -->
+  <div class="space-y-3">
+    <h3 class="text-xs font-mono uppercase tracking-widest text-sky-400/70">Education</h3>
+    <div class="rounded-xl border border-white/8 bg-white/[0.03] p-5 space-y-1">
+      <p class="text-sm font-semibold text-white">A.S. in Information Technology</p>
+      <p class="text-xs text-sky-400">Focus: Data Science & Information Security</p>
+      <p class="text-xs text-slate-500">County College of Morris · 2022 – 2026</p>
+      <p class="text-xs text-slate-500 mt-2">
+        Relevant coursework: Software Engineering · Foundations of Info Security · Data Science
+        Programming · Network Security · Database Programming (SQL) · Linux Administration
+      </p>
+    </div>
+  </div>
+
+  <!-- Certifications -->
+  <div class="space-y-3">
+    <h3 class="text-xs font-mono uppercase tracking-widest text-sky-400/70">Certifications</h3>
+    <div class="space-y-2">
+      {
+        certifications.map((cert) => (
+          <div class="flex items-center justify-between rounded-lg border border-white/5 bg-white/[0.02] px-4 py-2.5">
+            <span class="text-sm text-slate-300">{cert.name}</span>
+            {cert.date && (
+              <span class="text-xs font-mono text-sky-400/70 ml-4 flex-shrink-0">{cert.date}</span>
+            )}
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</div>

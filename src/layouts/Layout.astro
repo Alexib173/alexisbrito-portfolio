@@ -1,0 +1,33 @@
+---
+import '@fontsource-variable/onest';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'Alexis Brito – IT | Data Science | Info Sec.',
+  description = 'Bilingual IT and data-focused professional specializing in data analytics, data science, and information security.',
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body
+    class="bg-[#0a0f1a] text-slate-200 font-onest antialiased selection:bg-sky-500/30 selection:text-sky-200"
+  >
+    <div
+      class="absolute inset-0 -z-10 h-full w-full bg-[radial-gradient(ellipse_80%_60%_at_50%_-20%,rgba(56,189,248,0.08),rgba(255,255,255,0))]"
+    >
+    </div>
+    <slot />
+  </body>
+</html>
