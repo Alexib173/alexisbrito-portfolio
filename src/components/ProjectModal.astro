@@ -5,9 +5,9 @@ interface Props {
 ---
 
 <div id={`modal-${Astro.props.projectId}`} class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onclick="event.target === this && this.classList.add('hidden')">
-  <div class="bg-[#0a0f1a]/95 border border-white/10 rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
+  <div class="bg-[#0a0f1a]/95 border border-white/10 rounded-2xl max-w-6xl w-full max-h-[90vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
     <!-- Close button -->
-    <div class="sticky top-0 flex justify-between items-center p-6 border-b border-white/10 bg-[#0a0f1a]/95">
+    <div class="sticky top-0 z-10 flex justify-between items-center p-6 border-b border-white/10 bg-[#0a0f1a]">
       <h2 id={`modal-title-${Astro.props.projectId}`} class="text-2xl font-bold text-white"></h2>
       <button
         onclick={`document.getElementById('modal-${Astro.props.projectId}').classList.add('hidden')`}

@@ -8,9 +8,40 @@ const tagColors: Record<string, string> = {
   Statistics: 'bg-green-400/10 text-green-300 border-green-400/20',
   'Data Analysis': 'bg-emerald-400/10 text-emerald-300 border-emerald-400/20',
   BeautifulSoup: 'bg-orange-400/10 text-orange-300 border-orange-400/20',
+  Tableau: 'bg-sky-400/10 text-sky-300 border-sky-400/20',
 };
 
 const projects = [
+  {
+    id: 'baseball-origins',
+    title: "Where Baseball's Best Come From",
+    tags: ['Tableau', 'Python', 'Pandas'],
+    description:
+      "Watching the World Baseball Classic, I got caught up in the national pride of it all: the Dominican power hitters, the Venezuelan infielders, the precision of the Japanese roster. It made me wonder which countries actually produce the best baseball players, and how each nation's style shows up in the numbers. This dashboard compares the career stats of 34 legendary players across 8 countries, letting you filter by country and switch metrics to see where the game's greatest talent comes from. Tools: Tableau Public, Python (Pandas). Data: Baseball Reference / Baseball Almanac.",
+    github: 'https://public.tableau.com/app/profile/alexis.brito1635/viz/WhereBaseballsBestComeFrom/Dashboard1',
+    tableau: 'https://public.tableau.com/views/WhereBaseballsBestComeFrom/Dashboard1',
+    charts: [
+      { title: 'Interactive Dashboard', image: '/baseball-origins-charts/dashboard-preview.png' },
+    ],
+    qa: [
+      {
+        q: 'Average Statistic by Country: which countries produce the most productive players, and does the ranking change with the metric?',
+        a: "It changes a lot. By home runs and RBI, the Dominican Republic and United States lead on raw power. Switch to batting average or on-base percentage and Japan and Puerto Rico climb, reflecting a game built on contact and discipline. There's no single best country; each dominates a different dimension.",
+      },
+      {
+        q: 'Player Detail by Country: once you pick a country, who is its standout, and how far ahead are they?',
+        a: "Every country has one clear headliner: Albert Pujols (Dominican Republic), Barry Bonds (United States), Miguel Cabrera (Venezuela), Roberto Clemente (Puerto Rico). The gap to the rest is often wide, showing each nation's reputation is carried by one or two generational talents.",
+      },
+      {
+        q: 'Power vs. Contact: is there a tradeoff between power and average, and do countries cluster by style?',
+        a: 'Yes. High home run totals skew Dominican and American; high batting average with less power skews Japanese and Puerto Rican. Few players excel at both, and those who do (largest by WAR) are the all-time greats like Bonds and Cabrera.',
+      },
+      {
+        q: 'Conclusion — is there a single best country for baseball?',
+        a: 'There is no universal best. Latin American nations dominate power, Japan and Puerto Rico lead in contact and discipline, and the United States anchors the all-time WAR leaders on sheer talent pool. The World Baseball Classic feels so competitive because every country brings a different strength.',
+      },
+    ],
+  },
   {
     id: 'citi-bike',
     title: 'NYC Citi Bike Data Analysis',
@@ -37,7 +68,12 @@ const projects = [
     description:
       'Designed a multi-dimensional statistical matching algorithm to identify ideal basketball recruits from large player datasets. Built a scoring engine ranking candidates on shooting efficiency, defensive rating, and positional versatility.',
     github: 'https://github.com/Alexib173',
-    charts: [],
+    charts: [
+      { title: 'Sixth Man Class Diagram', image: '/sixth-man-charts/class-diagram.png' },
+      { title: 'Detailed Class Diagram', image: '/sixth-man-charts/detailed-class-diagram.png' },
+      { title: 'Enter Player Stats — Sequence Diagram', image: '/sixth-man-charts/enter-player-stats-sequence.png' },
+      { title: 'Update Player Stats — Sequence Diagram', image: '/sixth-man-charts/update-player-stats-sequence.png' },
+    ],
     qa: [
       { q: 'How does the matching algorithm work?', a: 'The system uses weighted multi-factor analysis, comparing prospect metrics against position-specific benchmarks and team composition needs.' },
       { q: 'What metrics are evaluated?', a: 'Shooting efficiency (2P%, 3P%, FT%), defensive rating, positional versatility, and consistency metrics across different game situations.' },
@@ -86,6 +122,7 @@ const projects = [
         data-project-title={project.title}
         data-project-description={project.description}
         data-project-github={project.github}
+        data-project-tableau={project.tableau || ''}
         data-project-tags={JSON.stringify(project.tags)}
         data-project-charts={JSON.stringify(project.charts)}
         data-project-qa={JSON.stringify(project.qa)}
@@ -103,13 +140,19 @@ const projects = [
               target="_blank"
               rel="noopener noreferrer"
               class="flex-shrink-0 rounded-full p-1.5 text-slate-500 transition hover:text-sky-400"
-              aria-label="View on GitHub"
+              aria-label={project.tableau ? 'View on Tableau Public' : 'View on GitHub'}
               onclick="event.stopPropagation()"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/>
-                <path d="M9 18c-4.51 2-5-2-7-2"/>
-              </svg>
+              {project.tableau ? (
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M15 3h6v6"/><path d="M10 14L21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                </svg>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/>
+                  <path d="M9 18c-4.51 2-5-2-7-2"/>
+                </svg>
+              )}
             </a>
           </div>
 
@@ -124,6 +167,55 @@ const projects = [
           </div>
 
           <p class="text-sm text-slate-400 leading-relaxed">{project.description}</p>
+
+          {project.charts.length > 0 && (
+            <div class="chart-carousel pt-1" data-index="0">
+              <div class="carousel-viewport relative overflow-hidden rounded-lg border border-white/10 bg-white/5">
+                {project.tableau && (
+                  <span class="absolute top-2 right-2 z-10 inline-flex items-center gap-1 rounded-full bg-sky-500/90 px-2.5 py-1 text-[11px] font-semibold text-white shadow-lg backdrop-blur-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+                    Interactive
+                  </span>
+                )}
+                <div class="carousel-track flex transition-transform duration-300 ease-out">
+                  {project.charts.map((chart) => (
+                    <div class="carousel-slide w-full flex-shrink-0 p-3">
+                      <p class="text-[11px] text-slate-400 mb-2">{chart.title}</p>
+                      <img src={chart.image} alt={chart.title} class="rounded-md w-full bg-white/80 p-2" draggable={false} loading="lazy" />
+                    </div>
+                  ))}
+                </div>
+
+                {project.charts.length > 1 && (
+                  <>
+                    <button type="button" class="carousel-prev absolute left-2 top-1/2 -translate-y-1/2 rounded-full p-1.5 bg-black/50 text-white/80 hover:bg-black/70 hover:text-white transition backdrop-blur-sm" aria-label="Previous chart">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                    </button>
+                    <button type="button" class="carousel-next absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-1.5 bg-black/50 text-white/80 hover:bg-black/70 hover:text-white transition backdrop-blur-sm" aria-label="Next chart">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+                    </button>
+                  </>
+                )}
+              </div>
+
+              {project.charts.length > 1 && (
+                <div class="flex items-center justify-between mt-3">
+                  <div class="carousel-dots flex gap-1.5">
+                    {project.charts.map((_, di) => (
+                      <button type="button" class={`carousel-dot h-2 rounded-full transition-all ${di === 0 ? 'w-6 bg-sky-400' : 'w-2 bg-white/20 hover:bg-white/40'}`} data-dot={di} aria-label={`Go to chart ${di + 1}`}></button>
+                    ))}
+                  </div>
+                  <span class="carousel-counter text-[11px] font-mono text-slate-500">1 / {project.charts.length}</span>
+                </div>
+              )}
+
+              <p class="text-center text-[11px] text-slate-500 mt-2">
+                {project.tableau
+                  ? 'Click the card to open the live interactive dashboard'
+                  : 'Scroll over the chart to browse · click the card for the full story'}
+              </p>
+            </div>
+          )}
         </div>
       </div>
     ))
@@ -134,13 +226,110 @@ const projects = [
 {projects.map((project) => <ProjectModal projectId={project.id} />)}
 
 <script is:inline>
+  // Interactive chart carousel: first graph shows by default, wheel/scroll,
+  // arrows, dots, and keyboard arrows cycle through the graphs.
+  function initChartCarousel(root, total) {
+    const carousel = root.querySelector('.chart-carousel');
+    if (!carousel || total <= 1) return;
+
+    const track = carousel.querySelector('.carousel-track');
+    const viewport = carousel.querySelector('.carousel-viewport');
+    const counter = carousel.querySelector('.carousel-counter');
+    const dots = Array.from(carousel.querySelectorAll('.carousel-dot'));
+    let index = 0;
+    let wheelLock = false;
+
+    // Autoplay: advance every 7s for a more dynamic feel.
+    // Clear any timer from a previous init of this root to avoid leaks.
+    if (root._carouselTimer) clearInterval(root._carouselTimer);
+    function startAutoplay() {
+      if (total <= 1) return;
+      stopAutoplay();
+      root._carouselTimer = setInterval(() => go(index + 1), 7000);
+    }
+    function stopAutoplay() {
+      if (root._carouselTimer) { clearInterval(root._carouselTimer); root._carouselTimer = null; }
+    }
+
+    function render() {
+      track.style.transform = `translateX(-${index * 100}%)`;
+      if (counter) counter.textContent = `${index + 1} / ${total}`;
+      dots.forEach((dot, i) => {
+        dot.classList.toggle('w-6', i === index);
+        dot.classList.toggle('bg-sky-400', i === index);
+        dot.classList.toggle('w-2', i !== index);
+        dot.classList.toggle('bg-white/20', i !== index);
+      });
+      carousel.dataset.index = String(index);
+    }
+
+    function go(next) {
+      index = (next + total) % total;
+      render();
+    }
+
+    // Manual navigation resets the autoplay timer so it doesn't jump immediately after.
+    function manualGo(next) { go(next); startAutoplay(); }
+
+    // stopPropagation so control clicks on a card don't also open the modal
+    carousel.querySelector('.carousel-prev')?.addEventListener('click', (e) => { e.stopPropagation(); manualGo(index - 1); });
+    carousel.querySelector('.carousel-next')?.addEventListener('click', (e) => { e.stopPropagation(); manualGo(index + 1); });
+    dots.forEach((dot) => dot.addEventListener('click', (e) => { e.stopPropagation(); manualGo(Number(dot.dataset.dot)); }));
+
+    // Wheel / scroll navigation within the chart area
+    viewport.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (wheelLock) return;
+      const delta = e.deltaY || e.deltaX;
+      if (Math.abs(delta) < 4) return;
+      manualGo(index + (delta > 0 ? 1 : -1));
+      wheelLock = true;
+      setTimeout(() => { wheelLock = false; }, 350);
+    }, { passive: false });
+
+    // Touch swipe support
+    let startX = 0;
+    viewport.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; }, { passive: true });
+    viewport.addEventListener('touchend', (e) => {
+      const dx = e.changedTouches[0].clientX - startX;
+      if (Math.abs(dx) > 40) manualGo(index + (dx < 0 ? 1 : -1));
+    }, { passive: true });
+
+    // Pause autoplay while hovering the chart, resume on leave.
+    viewport.addEventListener('mouseenter', stopAutoplay);
+    viewport.addEventListener('mouseleave', startAutoplay);
+
+    // Keyboard arrows — only when this carousel lives inside a modal that's open.
+    const modal = carousel.closest('[id^="modal-"]');
+    if (modal) {
+      // Remove any handler from a previous open of this modal to avoid leaks.
+      if (root._carouselKeyHandler) document.removeEventListener('keydown', root._carouselKeyHandler);
+      const onKey = (e) => {
+        if (modal.classList.contains('hidden')) return;
+        if (e.key === 'ArrowRight') { e.preventDefault(); go(index + 1); }
+        if (e.key === 'ArrowLeft') { e.preventDefault(); go(index - 1); }
+      };
+      root._carouselKeyHandler = onKey;
+      document.addEventListener('keydown', onKey);
+    }
+
+    render();
+    startAutoplay();
+  }
+
   document.querySelectorAll('.project-card').forEach((card) => {
+    // Initialize the on-card chart carousel (first graph shown, scroll to browse)
+    const cardChartCount = card.querySelectorAll('.carousel-slide').length;
+    if (cardChartCount > 0) initChartCarousel(card, cardChartCount);
+
     card.addEventListener('click', function() {
       const cardElement = this;
       const projectId = cardElement.dataset.projectId;
       const projectTitle = cardElement.dataset.projectTitle;
       const projectDescription = cardElement.dataset.projectDescription;
       const projectGithub = cardElement.dataset.projectGithub;
+      const projectTableau = cardElement.dataset.projectTableau || '';
       const projectTags = JSON.parse(cardElement.dataset.projectTags || '[]');
       const projectCharts = JSON.parse(cardElement.dataset.projectCharts || '[]');
       const projectQa = JSON.parse(cardElement.dataset.projectQa || '[]');
@@ -155,6 +344,11 @@ const projects = [
       if (descEl) descEl.textContent = projectDescription || '';
       if (githubEl && githubEl.tagName === 'A') {
         githubEl.setAttribute('href', projectGithub || '');
+        if (projectTableau) {
+          githubEl.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14L21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+            View on Tableau Public`;
+        }
       }
 
       // Set tags
@@ -165,22 +359,58 @@ const projects = [
           .join('');
       }
 
-      // Set charts
+      // Set charts. A live Tableau dashboard replaces the static carousel when present.
       const chartsContainer = document.getElementById(`modal-charts-${projectId}`);
-      if (chartsContainer && projectCharts.length > 0) {
+      if (chartsContainer && projectTableau) {
         chartsContainer.innerHTML = `
           <div>
-            <h3 class="text-sm font-semibold text-sky-400 uppercase tracking-wide mb-4">Visualizations</h3>
-            <div class="space-y-4">
-              ${projectCharts.map((chart) => `
-                <div class="rounded-lg bg-white/5 p-3 border border-white/10">
-                  <p class="text-xs text-slate-400 mb-3">${chart.title}</p>
-                  <img src="${chart.image}" alt="${chart.title}" class="rounded-md w-full bg-white/80 p-3" />
-                </div>
-              `).join('')}
+            <h3 class="text-sm font-semibold text-sky-400 uppercase tracking-wide mb-4">Interactive Dashboard</h3>
+            <div class="rounded-lg border border-white/10 bg-white/5 overflow-hidden">
+              <tableau-viz src="${projectTableau}" toolbar="bottom" hide-tabs device="desktop" height="840" class="block w-full" style="width:100%;min-height:840px;"></tableau-viz>
             </div>
+            <p class="text-[11px] text-slate-500 mt-2 text-center">Filter by country and switch metrics — live from Tableau Public (needs an internet connection).</p>
           </div>
         `;
+      } else if (chartsContainer && projectCharts.length > 0) {
+        chartsContainer.innerHTML = `
+          <div class="chart-carousel" data-index="0">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-sm font-semibold text-sky-400 uppercase tracking-wide">Visualizations</h3>
+              ${projectCharts.length > 1 ? `<span class="carousel-counter text-xs font-mono text-slate-500">1 / ${projectCharts.length}</span>` : ''}
+            </div>
+
+            <div class="carousel-viewport relative overflow-hidden rounded-lg border border-white/10 bg-white/5">
+              <div class="carousel-track flex transition-transform duration-300 ease-out">
+                ${projectCharts.map((chart) => `
+                  <div class="carousel-slide w-full flex-shrink-0 p-3">
+                    <p class="text-xs text-slate-400 mb-3">${chart.title}</p>
+                    <img src="${chart.image}" alt="${chart.title}" class="rounded-md w-full bg-white/80 p-3" draggable="false" />
+                  </div>
+                `).join('')}
+              </div>
+
+              ${projectCharts.length > 1 ? `
+                <button type="button" class="carousel-prev absolute left-2 top-1/2 -translate-y-1/2 rounded-full p-2 bg-black/50 text-white/80 hover:bg-black/70 hover:text-white transition backdrop-blur-sm" aria-label="Previous chart">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                </button>
+                <button type="button" class="carousel-next absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-2 bg-black/50 text-white/80 hover:bg-black/70 hover:text-white transition backdrop-blur-sm" aria-label="Next chart">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+                </button>
+              ` : ''}
+            </div>
+
+            ${projectCharts.length > 1 ? `
+              <div class="carousel-dots flex justify-center gap-2 mt-4">
+                ${projectCharts.map((_, di) => `
+                  <button type="button" class="carousel-dot h-2 rounded-full transition-all ${di === 0 ? 'w-6 bg-sky-400' : 'w-2 bg-white/20 hover:bg-white/40'}" data-dot="${di}" aria-label="Go to chart ${di + 1}"></button>
+                `).join('')}
+              </div>
+              <p class="text-center text-[11px] text-slate-500 mt-2">Scroll or use arrows to browse charts</p>
+            ` : ''}
+          </div>
+        `;
+
+        initChartCarousel(chartsContainer, projectCharts.length);
       }
 
       // Set Q&A

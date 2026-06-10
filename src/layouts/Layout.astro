@@ -20,6 +20,8 @@ const {
     <meta name="description" content={description} />
     <title>{title}</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!-- Tableau Embedding API v3 — registers the <tableau-viz> custom element for live dashboards -->
+    <script is:inline type="module" src="https://public.tableau.com/javascripts/api/tableau.embedding.3.latest.min.js"></script>
   </head>
   <body
     class="bg-[#0a0f1a] text-slate-200 font-onest antialiased selection:bg-sky-500/30 selection:text-sky-200"
