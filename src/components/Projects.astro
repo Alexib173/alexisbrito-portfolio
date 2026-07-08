@@ -9,6 +9,9 @@ const tagColors: Record<string, string> = {
   'Data Analysis': 'bg-emerald-400/10 text-emerald-300 border-emerald-400/20',
   BeautifulSoup: 'bg-orange-400/10 text-orange-300 border-orange-400/20',
   Tableau: 'bg-sky-400/10 text-sky-300 border-sky-400/20',
+  SQL: 'bg-indigo-400/10 text-indigo-300 border-indigo-400/20',
+  MySQL: 'bg-cyan-400/10 text-cyan-300 border-cyan-400/20',
+  'Power BI': 'bg-amber-400/10 text-amber-300 border-amber-400/20',
 };
 
 const projects = [
@@ -39,6 +42,40 @@ const projects = [
       {
         q: 'Conclusion — is there a single best country for baseball?',
         a: 'There is no universal best. Latin American nations dominate power, Japan and Puerto Rico lead in contact and discipline, and the United States anchors the all-time WAR leaders on sheer talent pool. The World Baseball Classic feels so competitive because every country brings a different strength.',
+      },
+    ],
+  },
+  {
+    id: 'supply-chain',
+    title: 'Supply Chain & Inventory Optimization',
+    tags: ['SQL', 'MySQL', 'Power BI'],
+    description:
+      "Every business that holds inventory lives with the same quiet tension: hold too much and cash freezes on the shelf; hold too little and you lose the sale. My earlier projects mostly described what happened — I wanted to build something that points to a decision. So I took a specialty-foods distributor's operational data (77 products, 29 suppliers, 3 carriers, ~830 orders spanning 1996–1998) and built an end-to-end pipeline answering the four questions leadership actually asks: where is cash trapped, where are we about to run out, which suppliers can we lean on, and are we overpaying to ship? I modeled six related tables in MySQL, wrote eight analytical queries (inventory turnover, stock-out risk, supplier lead time, a weighted 0–100 supplier score, slow-moving stock, and freight optimization), exposed the results as reporting views, and visualized them in an interactive Power BI dashboard. Tools: MySQL 8, SQL (CTEs, window functions, NTILE, weighted scoring), Power BI (DAX). Data: Northwind sample database.",
+    github: 'https://github.com/Alexib173/supply-chain-inventory-optimization',
+    // Renders the interactive in-site dashboard (SupplyChainDashboard.astro) inside the modal —
+    // a self-hosted recreation of the Power BI report, no external hosting needed.
+    dashboard: true,
+    charts: [],
+    qa: [
+      {
+        q: 'Why did you build this project?',
+        a: "Most of my earlier work answered 'what happened' — this one is about 'what should we do next.' Inventory is exactly where working capital and lost sales collide, so I wanted a full SQL-to-BI pipeline that turns raw order and stock tables into concrete operational decisions, not just charts. It was also my way of moving from analysis notebooks into database modeling and business intelligence tooling.",
+      },
+      {
+        q: 'What did the inventory analysis reveal?',
+        a: "Of 73 active products, 45 were healthy, 18 were understocked (at or below their reorder level), and 6 were overstocked. Turnover ranged from 1.4× (Grandma's Boysenberry Spread — 120 units of slow-moving stock tying up cash) to 184× (Sir Rodney's Scones — just 3 units against steady demand, a stock-out waiting to happen). Stock-out risk concentrated in Grains/Cereals, Confections, and Dairy.",
+      },
+      {
+        q: 'Which suppliers were most reliable?',
+        a: 'I scored each supplier 0–100, weighting on-time delivery 40%, lead-time speed 30%, and volume 30% (min-max normalized). Pavlova (80.6) and Plutzer Lebensmittelgroßmärkte (75.8) led the pack, with on-time rates of 94–98% and 6–9 day lead times — giving procurement an objective basis for preferred-supplier decisions instead of gut feel.',
+      },
+      {
+        q: 'Where was money being left on the table?',
+        a: 'Freight. Average cost per order ran $86.64 (United Package), $80.44 (Federal Shipping), and $65.00 (Speedy Express) — yet volume was split almost evenly across all three carriers. Shifting the mix toward the cheapest option at equivalent service implied roughly $11K in avoidable freight, about a 17% reduction against ~$65K of total spend.',
+      },
+      {
+        q: 'How was it built?',
+        a: 'CSV → MySQL (six modeled tables with primary/foreign keys and indexes) → a data-cleanup step that normalizes unshipped dates to NULL and sanity-checks the load → eight analytical query blocks → four reporting views that Power BI imports directly → an interactive dashboard with DAX measures and slicers.',
       },
     ],
   },
@@ -123,6 +160,7 @@ const projects = [
         data-project-description={project.description}
         data-project-github={project.github}
         data-project-tableau={project.tableau || ''}
+        data-project-dashboard={project.dashboard ? 'true' : ''}
         data-project-tags={JSON.stringify(project.tags)}
         data-project-charts={JSON.stringify(project.charts)}
         data-project-qa={JSON.stringify(project.qa)}
@@ -171,7 +209,7 @@ const projects = [
           {project.charts.length > 0 && (
             <div class="chart-carousel pt-1" data-index="0">
               <div class="carousel-viewport relative overflow-hidden rounded-lg border border-white/10 bg-white/5">
-                {project.tableau && (
+                {(project.tableau || project.dashboard) && (
                   <span class="absolute top-2 right-2 z-10 inline-flex items-center gap-1 rounded-full bg-sky-500/90 px-2.5 py-1 text-[11px] font-semibold text-white shadow-lg backdrop-blur-sm">
                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
                     Interactive
@@ -210,10 +248,29 @@ const projects = [
               )}
 
               <p class="text-center text-[11px] text-slate-500 mt-2">
-                {project.tableau
+                {project.tableau || project.dashboard
                   ? 'Click the card to open the live interactive dashboard'
                   : 'Scroll over the chart to browse · click the card for the full story'}
               </p>
+            </div>
+          )}
+
+          {project.dashboard && project.charts.length === 0 && (
+            <div class="pt-1">
+              <div class="carousel-viewport relative overflow-hidden rounded-lg border border-white/10 bg-gradient-to-br from-amber-400/[0.07] via-sky-400/[0.04] to-transparent">
+                <span class="absolute top-2 right-2 z-10 inline-flex items-center gap-1 rounded-full bg-sky-500/90 px-2.5 py-1 text-[11px] font-semibold text-white shadow-lg backdrop-blur-sm">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+                  Interactive
+                </span>
+                <div class="flex flex-col items-center justify-center gap-2 px-4 py-10 text-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="text-amber-300/90">
+                    <path d="M3 3v18h18"/><rect x="7" y="10" width="3" height="7" rx="0.5"/><rect x="12" y="6" width="3" height="11" rx="0.5"/><rect x="17" y="13" width="3" height="4" rx="0.5"/>
+                  </svg>
+                  <p class="text-sm font-medium text-white">Live interactive dashboard</p>
+                  <p class="text-[11px] text-slate-400">KPIs, supplier ranking, fulfillment trend &amp; carrier costs — with a month slider</p>
+                </div>
+              </div>
+              <p class="text-center text-[11px] text-slate-500 mt-2">Click the card to open the live interactive dashboard</p>
             </div>
           )}
         </div>
@@ -330,6 +387,7 @@ const projects = [
       const projectDescription = cardElement.dataset.projectDescription;
       const projectGithub = cardElement.dataset.projectGithub;
       const projectTableau = cardElement.dataset.projectTableau || '';
+      const projectDashboard = cardElement.dataset.projectDashboard === 'true';
       const projectTags = JSON.parse(cardElement.dataset.projectTags || '[]');
       const projectCharts = JSON.parse(cardElement.dataset.projectCharts || '[]');
       const projectQa = JSON.parse(cardElement.dataset.projectQa || '[]');
@@ -371,6 +429,9 @@ const projects = [
             <p class="text-[11px] text-slate-500 mt-2 text-center">Filter by country and switch metrics — live from Tableau Public (needs an internet connection).</p>
           </div>
         `;
+      } else if (chartsContainer && projectDashboard) {
+        // The interactive dashboard (SupplyChainDashboard.astro) is server-rendered
+        // inside this container and self-initializes — leave it untouched.
       } else if (chartsContainer && projectCharts.length > 0) {
         chartsContainer.innerHTML = `
           <div class="chart-carousel" data-index="0">

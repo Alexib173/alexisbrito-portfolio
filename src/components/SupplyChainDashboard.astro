@@ -1,0 +1,332 @@
+---
+// Self-contained interactive dashboard that recreates the Power BI report from the
+// project's own order-level data (src/data/supply-chain.json). Responsive inline SVG
+// (no libs). Interactions mirror Power BI: a month-range slider plus hover tooltips
+// and click-to-cross-filter on the supplier ranking AND the carrier bars (each filters
+// the KPIs, the fulfillment trend, and the other chart).
+import data from '../data/supply-chain.json';
+
+const topSuppliers = data.supplierPerf.slice(0, 12);
+---
+
+<div id="scd-root" class="relative space-y-6">
+  <div class="flex flex-wrap items-end justify-between gap-3">
+    <div>
+      <h3 class="text-sm font-semibold text-sky-400 uppercase tracking-wide">Live Dashboard</h3>
+      <p class="text-[11px] text-slate-500">Rebuilt from the project's own SQL views — hover for tooltips, click a supplier or carrier to cross-filter.</p>
+    </div>
+    <span class="inline-flex items-center gap-1 rounded-full bg-amber-400/10 border border-amber-400/20 px-2.5 py-1 text-[11px] font-semibold text-amber-300">
+      Power BI recreation
+    </span>
+  </div>
+
+  <!-- Active cross-filter chips (populated by JS) -->
+  <div id="scd-filters" class="hidden flex-wrap gap-2"></div>
+
+  <!-- Month range slider -->
+  <div class="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+    <div class="flex items-center justify-between mb-3">
+      <span class="text-xs font-semibold text-slate-300 uppercase tracking-wide">Order Month</span>
+      <span id="scd-range-label" class="text-xs font-mono text-sky-300"></span>
+    </div>
+    <div class="space-y-2">
+      <input id="scd-start" type="range" min="0" step="1" value="0" class="scd-slider w-full" aria-label="Start month" />
+      <input id="scd-end" type="range" min="0" step="1" value="0" class="scd-slider w-full" aria-label="End month" />
+    </div>
+    <div class="flex justify-between mt-1 text-[10px] font-mono text-slate-500">
+      <span id="scd-min-month"></span>
+      <span id="scd-max-month"></span>
+    </div>
+  </div>
+
+  <!-- KPI cards -->
+  <div class="grid grid-cols-2 lg:grid-cols-5 gap-3">
+    <div class="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+      <p class="text-[11px] text-slate-400 mb-1">Total Freight Spend</p>
+      <p id="kpi-freight" class="text-2xl font-bold text-white tabular-nums"></p>
+    </div>
+    <div class="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+      <p class="text-[11px] text-slate-400 mb-1">Avg Lead Days</p>
+      <p id="kpi-lead" class="text-2xl font-bold text-white tabular-nums"></p>
+    </div>
+    <div class="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+      <p class="text-[11px] text-slate-400 mb-1">On-Time Delivery</p>
+      <p id="kpi-ontime" class="text-2xl font-bold text-white tabular-nums"></p>
+    </div>
+    <div class="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+      <p class="text-[11px] text-slate-400 mb-1">Orders</p>
+      <p id="kpi-orders" class="text-2xl font-bold text-white tabular-nums"></p>
+    </div>
+    <div class="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+      <p class="text-[11px] text-slate-400 mb-1">Inventory Value <span class="text-slate-600">(snapshot)</span></p>
+      <p class="text-2xl font-bold text-white tabular-nums">${(data.inventory_value / 1000).toFixed(2)}K</p>
+    </div>
+  </div>
+
+  <div class="grid lg:grid-cols-2 gap-4">
+    <!-- Fulfillment trend -->
+    <div class="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+      <p class="text-sm font-semibold text-white mb-3">Order Fulfillment Trend</p>
+      <svg id="scd-trend" viewBox="0 0 720 300" preserveAspectRatio="xMidYMid meet" class="w-full"></svg>
+    </div>
+
+    <!-- Carrier cost -->
+    <div class="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+      <p class="text-sm font-semibold text-white mb-3">Carrier Cost Analysis <span class="text-[11px] font-normal text-slate-500">(click a bar to filter)</span></p>
+      <svg id="scd-carrier" viewBox="0 0 720 300" preserveAspectRatio="xMidYMid meet" class="w-full"></svg>
+    </div>
+  </div>
+
+  <!-- Supplier performance ranking (clickable) -->
+  <div class="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+    <div class="flex items-center justify-between mb-3">
+      <p class="text-sm font-semibold text-white">Supplier Performance Ranking</p>
+      <span class="text-[11px] text-slate-500">Top 12 · score 0–100 · click to filter</span>
+    </div>
+    <div class="space-y-1.5">
+      {topSuppliers.map((s) => (
+        <div
+          class="scd-sup-row flex items-center gap-3 rounded px-1 py-0.5 cursor-pointer transition hover:bg-white/[0.04]"
+          data-sup-idx={s.idx}
+          data-tip={`${s.name} — score ${s.score} · on-time ${s.on_time}% · lead ${s.avg_lead}d · ${s.orders} orders`}
+        >
+          <span class="w-40 shrink-0 truncate text-xs text-slate-300">{s.name}</span>
+          <div class="relative h-4 flex-1 rounded bg-white/5 overflow-hidden">
+            <div class="scd-sup-bar absolute inset-y-0 left-0 rounded bg-gradient-to-r from-sky-500 to-sky-400" style={`width:${s.score}%`}></div>
+          </div>
+          <span class="w-10 shrink-0 text-right text-xs font-mono text-sky-300">{s.score}</span>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <p class="text-[11px] text-slate-500 text-center">
+    Drag the sliders to change the month window · hover any chart for details · click a supplier or carrier to cross-filter the whole page.
+  </p>
+
+  <!-- Floating tooltip -->
+  <div id="scd-tip" class="pointer-events-none absolute z-20 hidden rounded-md border border-white/15 bg-[#0a0f1a] px-2.5 py-1.5 text-xs text-slate-200 shadow-xl"></div>
+</div>
+
+<style>
+  .scd-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 4px;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.12);
+    outline: none;
+  }
+  .scd-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px; height: 16px;
+    border-radius: 9999px;
+    background: rgb(56, 189, 248);
+    cursor: pointer;
+    border: 2px solid #0a0f1a;
+    box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.4);
+  }
+  .scd-slider::-moz-range-thumb {
+    width: 16px; height: 16px;
+    border-radius: 9999px;
+    background: rgb(56, 189, 248);
+    cursor: pointer;
+    border: 2px solid #0a0f1a;
+  }
+  .scd-sup-row.scd-selected { background: rgba(56, 189, 248, 0.12); }
+  .scd-sup-row.scd-dim { opacity: 0.4; }
+  .scd-sup-row.scd-selected .scd-sup-bar { background: linear-gradient(to right, #0ea5e9, #7dd3fc); }
+  .scd-hit { cursor: pointer; }
+  .scd-hit:hover { fill: rgba(56, 189, 248, 0.22); }
+  .scd-bar { cursor: pointer; transition: opacity 0.15s; }
+  .scd-bar:hover { opacity: 0.82; }
+</style>
+
+<script define:vars={{ scd: data }}>
+  (function () {
+    const { monthsList, carriersList, suppliersList, orders } = scd;
+    const N = monthsList.length;
+    const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const fmtMonth = (ym) => { const [y, m] = ym.split('-'); return `${MONTH_NAMES[+m - 1]} ${y}`; };
+    const fmtK = (n) => `$${(n / 1000).toFixed(2)}K`;
+    const CARRIER_COLORS = { 'United Package': '#38bdf8', 'Federal Shipping': '#fbbf24', 'Speedy Express': '#a78bfa' };
+
+    // order record indices
+    const O_MON = 0, O_FRT = 1, O_SHP = 2, O_LEAD = 3, O_OT = 4, O_CAR = 5, O_SUP = 6;
+
+    // chart font sizes (SVG user units — larger so they stay legible when scaled down)
+    const F_TICK = 15, F_LABEL = 15, F_VALUE = 17, F_TITLE = 15;
+
+    const root = document.getElementById('scd-root');
+    const startEl = document.getElementById('scd-start');
+    const endEl = document.getElementById('scd-end');
+    const rangeLabel = document.getElementById('scd-range-label');
+    const svgTrend = document.getElementById('scd-trend');
+    const svgCarrier = document.getElementById('scd-carrier');
+    const tip = document.getElementById('scd-tip');
+    const filtersBar = document.getElementById('scd-filters');
+    const supRows = Array.from(document.querySelectorAll('.scd-sup-row'));
+
+    startEl.max = String(N - 1); endEl.max = String(N - 1);
+    startEl.value = '0'; endEl.value = String(N - 1);
+    document.getElementById('scd-min-month').textContent = fmtMonth(monthsList[0]);
+    document.getElementById('scd-max-month').textContent = fmtMonth(monthsList[N - 1]);
+
+    let selSupplier = null;  // supplier index or null
+    let selCarrier = null;   // carrier index or null
+
+    // --- svg helpers ---
+    const line = (x1, y1, x2, y2, stroke, w, dash) =>
+      `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${stroke}" stroke-width="${w}"${dash ? ` stroke-dasharray="${dash}"` : ''} />`;
+    const text = (x, y, str, o = {}) =>
+      `<text x="${x}" y="${y}" fill="${o.fill || '#94a3b8'}" font-size="${o.size || F_TICK}" font-family="ui-monospace, monospace" text-anchor="${o.anchor || 'middle'}"${o.weight ? ` font-weight="${o.weight}"` : ''}${o.transform ? ` transform="${o.transform}"` : ''}>${str}</text>`;
+    const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+
+    function drawTrend(perMonth, a, b) {
+      const W = 720, H = 300, padL = 54, padR = 20, padT = 18, padB = 52;
+      const plotW = W - padL - padR, plotH = H - padT - padB;
+      const pts = [];
+      for (let i = a; i <= b; i++) pts.push({ m: monthsList[i], v: perMonth[i] || 0 });
+      const maxV = Math.max(...pts.map(p => p.v), 1);
+      const niceMax = Math.max(10, Math.ceil(maxV / 10) * 10);
+      const xOf = (k) => padL + (pts.length === 1 ? plotW / 2 : (k / (pts.length - 1)) * plotW);
+      const yOf = (v) => padT + plotH - (v / niceMax) * plotH;
+      let g = '';
+      for (let t = 0; t <= 4; t++) {
+        const v = (niceMax / 4) * t, y = yOf(v);
+        g += line(padL, y, W - padR, y, 'rgba(255,255,255,0.07)', 1);
+        g += text(padL - 10, y + 5, String(Math.round(v)), { anchor: 'end' });
+      }
+      g += text(18, padT + plotH / 2, 'Orders', { size: F_TITLE, transform: `rotate(-90 18 ${padT + plotH / 2})` });
+      const poly = pts.map((p, k) => `${xOf(k)},${yOf(p.v)}`);
+      g += `<path d="M ${xOf(0)},${yOf(0)} L ${poly.join(' L ')} L ${xOf(pts.length - 1)},${yOf(0)} Z" fill="rgba(56,189,248,0.12)" />`;
+      g += `<polyline points="${poly.join(' ')}" fill="none" stroke="#38bdf8" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" />`;
+      pts.forEach((p, k) => {
+        g += `<circle cx="${xOf(k)}" cy="${yOf(p.v)}" r="4" fill="#0a0f1a" stroke="#38bdf8" stroke-width="2" />`;
+        g += `<circle class="scd-hit" cx="${xOf(k)}" cy="${yOf(p.v)}" r="14" fill="transparent" data-tip="${fmtMonth(p.m)} • ${p.v} orders" />`;
+      });
+      const step = Math.max(1, Math.ceil(pts.length / 6));
+      pts.forEach((p, k) => {
+        if (k % step !== 0 && k !== pts.length - 1) return;
+        const anchor = k === 0 ? 'start' : (k === pts.length - 1 ? 'end' : 'middle');
+        g += text(xOf(k), H - 18, fmtMonth(p.m), { size: F_LABEL, anchor });
+      });
+      svgTrend.innerHTML = g;
+    }
+
+    function drawCarrier(byCarrier) {
+      const W = 720, H = 300, padL = 54, padR = 20, padT = 18, padB = 52;
+      const plotW = W - padL - padR, plotH = H - padT - padB;
+      const totals = carriersList.map((c, i) => ({ name: c, idx: i, val: byCarrier[i] || 0 })).sort((x, y) => y.val - x.val);
+      const maxV = Math.max(...totals.map(t => t.val), 1);
+      const niceMax = Math.max(5000, Math.ceil(maxV / 5000) * 5000);
+      const yOf = (v) => padT + plotH - (v / niceMax) * plotH;
+      let g = '';
+      for (let t = 0; t <= 4; t++) {
+        const v = (niceMax / 4) * t, y = yOf(v);
+        g += line(padL, y, W - padR, y, 'rgba(255,255,255,0.07)', 1);
+        g += text(padL - 10, y + 5, `${Math.round(v / 1000)}K`, { anchor: 'end' });
+      }
+      const bw = plotW / totals.length;
+      totals.forEach((t, i) => {
+        const cx = padL + bw * i + bw / 2;
+        const barW = Math.min(130, bw * 0.52);
+        const y = yOf(t.val), h = padT + plotH - y;
+        const col = CARRIER_COLORS[t.name] || '#38bdf8';
+        const dim = selCarrier !== null && selCarrier !== t.idx;
+        const sel = selCarrier === t.idx;
+        g += `<rect class="scd-bar" x="${cx - barW / 2}" y="${y}" width="${barW}" height="${Math.max(h, 2)}" rx="5" fill="${col}" opacity="${dim ? 0.35 : 1}"${sel ? ' stroke="#e2e8f0" stroke-width="2"' : ''} data-carrier-idx="${t.idx}" data-tip="${esc(t.name)} • $${t.val.toLocaleString()} freight — click to filter" />`;
+        g += text(cx, y - 9, `$${(t.val / 1000).toFixed(1)}K`, { fill: '#f1f5f9', size: F_VALUE, weight: '700' });
+        g += text(cx, H - 18, t.name, { size: F_LABEL });
+      });
+      svgCarrier.innerHTML = g;
+    }
+
+    function recompute() {
+      let a = +startEl.value, b = +endEl.value;
+      if (a > b) [a, b] = [b, a];
+      rangeLabel.textContent = `${fmtMonth(monthsList[a])} → ${fmtMonth(monthsList[b])}`;
+
+      let freight = 0, ordCount = 0, shipped = 0, leadSum = 0, ontime = 0;
+      const perMonth = new Array(N).fill(0);
+      const byCarrier = new Array(carriersList.length).fill(0);
+
+      for (const o of orders) {
+        const mi = o[O_MON];
+        if (mi < a || mi > b) continue;
+        if (selSupplier !== null && !o[O_SUP].includes(selSupplier)) continue;
+        if (selCarrier !== null && o[O_CAR] !== selCarrier) continue;
+        freight += o[O_FRT];
+        ordCount++;
+        perMonth[mi]++;
+        byCarrier[o[O_CAR]] += o[O_FRT];
+        if (o[O_SHP] === 1) { shipped++; leadSum += o[O_LEAD]; ontime += o[O_OT]; }
+      }
+
+      document.getElementById('kpi-freight').textContent = fmtK(freight);
+      document.getElementById('kpi-lead').textContent = shipped ? (leadSum / shipped).toFixed(1) : '—';
+      document.getElementById('kpi-ontime').textContent = shipped ? `${(100 * ontime / shipped).toFixed(1)}%` : '—';
+      document.getElementById('kpi-orders').textContent = ordCount.toLocaleString();
+
+      drawTrend(perMonth, a, b);
+      drawCarrier(byCarrier);
+      renderChips();
+    }
+
+    // --- cross-filter chips ---
+    function chipBtn(label, onClear) {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'inline-flex items-center gap-2 rounded-full bg-sky-500/15 border border-sky-400/30 px-3 py-1 text-xs font-medium text-sky-200 hover:bg-sky-500/25 transition';
+      b.innerHTML = `<span>${label}</span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6l-12 12M6 6l12 12"/></svg>`;
+      b.addEventListener('click', onClear);
+      return b;
+    }
+    function renderChips() {
+      filtersBar.innerHTML = '';
+      if (selSupplier !== null) filtersBar.appendChild(chipBtn(`Supplier: <b>${suppliersList[selSupplier]}</b>`, () => setSupplier(selSupplier)));
+      if (selCarrier !== null) filtersBar.appendChild(chipBtn(`Carrier: <b>${carriersList[selCarrier]}</b>`, () => setCarrier(selCarrier)));
+      filtersBar.classList.toggle('hidden', selSupplier === null && selCarrier === null);
+      filtersBar.classList.toggle('flex', selSupplier !== null || selCarrier !== null);
+    }
+
+    function setSupplier(idx) {
+      selSupplier = (selSupplier === idx) ? null : idx;
+      supRows.forEach((r) => {
+        const ri = +r.dataset.supIdx;
+        r.classList.toggle('scd-selected', selSupplier === ri);
+        r.classList.toggle('scd-dim', selSupplier !== null && selSupplier !== ri);
+      });
+      recompute();
+    }
+    function setCarrier(idx) {
+      selCarrier = (selCarrier === idx) ? null : idx;
+      recompute();
+    }
+
+    supRows.forEach((r) => r.addEventListener('click', () => setSupplier(+r.dataset.supIdx)));
+    svgCarrier.addEventListener('click', (e) => {
+      const bar = e.target.closest('[data-carrier-idx]');
+      if (bar) setCarrier(+bar.dataset.carrierIdx);
+    });
+
+    // --- tooltip (delegated) ---
+    root.addEventListener('mousemove', (e) => {
+      const el = e.target.closest('[data-tip]');
+      if (!el) { tip.classList.add('hidden'); return; }
+      tip.innerHTML = el.getAttribute('data-tip');
+      tip.classList.remove('hidden');
+      const rb = root.getBoundingClientRect();
+      let x = e.clientX - rb.left + 14, y = e.clientY - rb.top + 14;
+      if (x + tip.offsetWidth > rb.width) x = e.clientX - rb.left - tip.offsetWidth - 14;
+      tip.style.left = x + 'px';
+      tip.style.top = y + 'px';
+    });
+    root.addEventListener('mouseleave', () => tip.classList.add('hidden'));
+
+    startEl.addEventListener('input', recompute);
+    endEl.addEventListener('input', recompute);
+    recompute();
+  })();
+</script>

@@ -1,4 +1,6 @@
 ---
+import SupplyChainDashboard from './SupplyChainDashboard.astro';
+
 interface Props {
   projectId: string;
 }
@@ -35,7 +37,9 @@ interface Props {
       </div>
 
       <!-- Charts/Images -->
-      <div id={`modal-charts-${Astro.props.projectId}`} class="space-y-4"></div>
+      <div id={`modal-charts-${Astro.props.projectId}`} class="space-y-4">
+        {Astro.props.projectId === 'supply-chain' && <SupplyChainDashboard />}
+      </div>
 
       <!-- Q&A Section -->
       <div id={`modal-qa-${Astro.props.projectId}`} class="space-y-4"></div>
